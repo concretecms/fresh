@@ -1,0 +1,20 @@
+{
+    "name": "portlandlabs/seed",
+    "description": "concrete5 database seeder",
+    "type": "concrete5-package",
+    "authors": [
+        {
+            "name": "Korvin Szanto",
+            "email": "korvinszanto@gmail.com"
+        }
+    ],
+    "require": {
+        "fzaninotto/faker": "^1.8",
+        "concrete5/core": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "PortlandLabs\\Seed\\": "src"
+        }
+    }
+}
