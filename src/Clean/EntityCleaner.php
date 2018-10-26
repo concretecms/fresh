@@ -40,6 +40,7 @@ class EntityCleaner extends Cleaner
         }
 
         $this->clearBuffer($em, $buffer);
+        $em->clear();
     }
 
     /**

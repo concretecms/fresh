@@ -59,6 +59,9 @@ class FileCleaner extends Cleaner
             $this->output->newLine();
             $em->detach($version);
         }
+
+        // Clear out anything related to us
+        $em->clear();
     }
 
     /**
