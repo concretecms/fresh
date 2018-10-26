@@ -1,14 +1,10 @@
 <?php
-use \PortlandLabs\Seed\Clean;
 
 return [
-    'cleaners' => [
-        'simple' => Clean\SimpleCleaner::class
-    ],
+    'cleaner' =>  \PortlandLabs\Fresh\Clean\SimpleCleaner::class,
     'attributes' => [
         /** Map attributes directly to a Faker property */
-        'first_name' => 'firstName',
-        'last_name' => 'lastName'
+        /** 'first_name' => 'firstName' */
     ],
     'clean_super_admin' => false,
     /** File types that we don't need to sanitize */

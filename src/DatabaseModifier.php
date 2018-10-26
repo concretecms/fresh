@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed;
+namespace PortlandLabs\Fresh;
 
 use Concrete\Core\Application\ApplicationAwareInterface;
 use Concrete\Core\Application\ApplicationAwareTrait;
@@ -17,7 +17,7 @@ abstract class DatabaseModifier implements ApplicationAwareInterface
     /**
      * The console output instance.
      *
-     * @var OutputInterface|\Concrete\Core\Console\OutputStyle
+     * @var \Symfony\Component\Console\Style\OutputStyle|\Concrete\Core\Console\OutputStyle
      */
     protected $output;
 
@@ -33,12 +33,13 @@ abstract class DatabaseModifier implements ApplicationAwareInterface
     {
         $classes = !is_array($class) ? [$class] : $class;
 
-        foreach ($classes as $class) {
+        foreach ($classes as $modifier) {
             if ($silent === false && isset($this->output)) {
-                $basename = class_basename($class);
+                $basename = class_basename($modifier);
                 $this->output->section($basename);
             }
-            $this->resolve($class)->__invoke();
+
+            $this->resolve($modifier)->__invoke();
         }
 
         return $this;

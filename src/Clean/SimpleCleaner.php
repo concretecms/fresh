@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed\Clean;
+namespace PortlandLabs\Fresh\Clean;
 
 class SimpleCleaner extends Cleaner
 {
@@ -12,9 +12,11 @@ class SimpleCleaner extends Cleaner
     {
         $this->call([
             FileCleaner::class,
+            UserCleaner::class,
+            EntityCleaner::class,
             PrivateMessageCleaner::class,
             LogCleaner::class,
-            UserCleaner::class
+            FormCleaner::class
         ]);
     }
 }

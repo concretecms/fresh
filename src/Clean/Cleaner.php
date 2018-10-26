@@ -1,8 +1,8 @@
 <?php
 
-namespace PortlandLabs\Seed\Clean;
+namespace PortlandLabs\Fresh\Clean;
 
-use PortlandLabs\Seed\DatabaseModifier;
+use PortlandLabs\Fresh\DatabaseModifier;
 
 /**
  * Parent class for Cleaner subclasses

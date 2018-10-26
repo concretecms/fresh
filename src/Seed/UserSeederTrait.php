@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed\Seed;
+namespace PortlandLabs\Fresh\Seed;
 
 use Concrete\Core\Attribute\AttributeKeyInterface;
 use Concrete\Core\User\Group\Group;
@@ -26,7 +26,7 @@ trait UserSeederTrait
      * @param array $groups
      * @param array $attributes
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function user(
         string $username = null,
@@ -47,7 +47,7 @@ trait UserSeederTrait
      *
      * @param string $username
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function withUsername(string $username): Seeder
     {
@@ -60,7 +60,7 @@ trait UserSeederTrait
      *
      * @param string $email
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function withEmail(string $email): Seeder
     {
@@ -73,7 +73,7 @@ trait UserSeederTrait
      *
      * @param string|\Concrete\Core\User\Group\Group $group
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function withAddedGroup($group): Seeder
     {
@@ -87,7 +87,7 @@ trait UserSeederTrait
      * @param AttributeKeyInterface|string $key Attribute key or handle
      * @param mixed $value The value
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function withAttribute($key, $value): Seeder
     {
@@ -106,7 +106,7 @@ trait UserSeederTrait
      *
      * @param string $password
      *
-     * @return \PortlandLabs\Seed\Seed\Seeder|static
+     * @return \PortlandLabs\Fresh\Seed\Seeder|static
      */
     public function withPassword(string $password): Seeder
     {

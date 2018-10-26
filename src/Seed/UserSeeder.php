@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed\Seed;
+namespace PortlandLabs\Fresh\Seed;
 
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\User\RegistrationService;
@@ -22,8 +22,8 @@ class UserSeeder extends Seeder
      */
     public function run(Repository $config)
     {
-        $users = (int)$config->get('seed::seeders.simple.users', 0);
-        $admins = (int)$config->get('seed::seeders.simple.admins', 0);
+        $users = (int)$config->get('fresh::seeders.users', 0);
+        $admins = (int)$config->get('fresh::seeders.admins', 0);
 
         $faker = \Faker\Factory::create();
         $service = $this->app->make(RegistrationService::class);

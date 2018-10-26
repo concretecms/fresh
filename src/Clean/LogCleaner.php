@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed\Clean;
+namespace PortlandLabs\Fresh\Clean;
 
 use Concrete\Core\Database\Connection\Connection;
 use Psr\Log\LoggerInterface;

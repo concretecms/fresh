@@ -1,11 +1,12 @@
 <?php
 
-namespace PortlandLabs\Seed\Clean;
+namespace PortlandLabs\Fresh\Clean;
 
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\User\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\ORMException;
 use Faker\Factory;
 use Faker\Generator;
 use Faker\Provider\Person;
@@ -26,7 +27,7 @@ class UserCleaner extends Cleaner
     public function run(EntityManagerInterface $em, Repository $config)
     {
         $faker = Factory::create();
-        $cleanAdmin = $config->get('seed::cleaners.simple.clean_super_admin', false);
+        $cleanAdmin = $config->get('fresh::cleaners.clean_super_admin', false);
         $repository = $em->getRepository(User::class);
         $allUsers = $repository->findAll();
 
@@ -42,6 +43,7 @@ class UserCleaner extends Cleaner
 
             $this->output->writeln(sprintf('  <info>⤷</info> Completed in <info>%s</info> ms using %s bytes of memory',
                 ($end - $start) * 1000, memory_get_usage(true)));
+            $this->output->newLine();
         }
     }
 
@@ -88,39 +90,46 @@ class UserCleaner extends Cleaner
             $user->setUserLastIP('127.0.0.1');
         });
 
-        $entityManager->detach($user);
-
-        $attributes = $config->get('seed::cleaners.simple.attributes');
+        $attributes = $config->get('fresh::cleaners.attributes');
         if ($attributes) {
             $info = $user->getUserInfoObject();
             foreach ($attributes as $key => $map) {
                 $value = $this->fakerValue($faker, $map, $user, $firstName, $lastName);
 
-                $this->output->writeln("  <info>⤷</info> Setting $key <info>→</info> $value");
-                $info->setAttribute($key, $value);
+                try {
+                    $info->setAttribute($key, $value);
+                    $this->output->writeln("  <info>⤷</info> Setting $key <info>→</info> $value");
+                } catch (ORMException $e) {
+                    // Ignore
+                }
             }
         }
 
-        $this->output->writeln('');
     }
 
     /**
      * Get a mapped value from Faker
      *
      * @param \Faker\Generator $faker
-     * @param string $map
+     * @param string|array $map
      *
-     * @return string
+     * @return string|string[]
      */
-    protected function fakerValue(Generator $faker, string $map, User $user, $firstName, $lastName): string
+    protected function fakerValue(Generator $faker, $map, User $user, $firstName, $lastName)
     {
         $localMap = [
             'first_name' => $firstName,
             'last_name' => $lastName
         ];
 
-        if (isset($localMap[$map])) {
+        if (is_string($map) && isset($localMap[$map])) {
             return $localMap[$map];
+        }
+
+        if (is_array($map)) {
+            return array_map(function($item) use ($faker, $user, $firstName, $lastName) {
+                return $this->fakerValue($faker, $item, $user, $firstName, $lastName);
+            }, $map);
         }
 
         return $faker->{$map};
@@ -151,7 +160,7 @@ class UserCleaner extends Cleaner
     private function inUse(EntityRepository $userRepository, string $username, string $email)
     {
         $qb = $userRepository->createQueryBuilder('u');
-        $result = $qb->select('count(u.uID) as count')
+        $result = $qb->select('count(u.uID) as c')
             ->where($qb->expr()->eq('u.uName', ':username'))
             ->orWhere($qb->expr()->eq('u.uEmail', ':email'))
             ->getQuery()->execute([
@@ -159,6 +168,6 @@ class UserCleaner extends Cleaner
                 'email' => $email
             ]);
 
-        return (bool)$result[0]['count'];
+        return (bool)$result[0]['c'];
     }
 }

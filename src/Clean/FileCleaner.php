@@ -1,15 +1,20 @@
 <?php
 
-namespace PortlandLabs\Seed\Clean;
+namespace PortlandLabs\Fresh\Clean;
 
+use function basename;
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\File\Version;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
+use League\Flysystem\FileNotFoundException;
+use function touch;
 
 /**
  * A cleaner that cleans out certain file types
- * Configure seed::cleaners.skip_file_types to set which file types are excluded
+ * Configure fresh::cleaners.skip_file_types to set which file types are excluded
  */
 class FileCleaner extends Cleaner
 {
@@ -24,10 +29,10 @@ class FileCleaner extends Cleaner
      */
     public function run(EntityManagerInterface $em, Repository $config)
     {
-        $skipTypes = $config->get('seed::cleaners.skip_file_types');
+        $skipTypes = $config->get('fresh::cleaners.skip_file_types');
 
         if (is_null($skipTypes)) {
-            $skipTypes = $config->get('seed::cleaners.default_skip_file_types');
+            $skipTypes = $config->get('fresh::cleaners.default_skip_file_types');
         }
 
         $qb = $em->createQueryBuilder();
@@ -39,10 +44,10 @@ class FileCleaner extends Cleaner
             $qb->setParameter('extensions', $skipTypes);
         }
 
-        $paginator = new Paginator($qb, false);
-
         /** @var Version $version */
-        foreach ($paginator as $version) {
+        foreach ($qb->getQuery()->iterate() as $row) {
+            $version = head($row);
+
             $this->output->writeln(sprintf(
                 '<info>⤷</info> Truncating File %d Version %d: %s',
                 $version->getFileID(),
@@ -51,21 +56,33 @@ class FileCleaner extends Cleaner
             ));
 
             $this->zeroOut($version);
+            $this->output->newLine();
+            $em->detach($version);
         }
-
-        exit;
     }
 
     /**
      * Zero out a file on the filesystem
      *
      * @param \Concrete\Core\Entity\File\Version $version
-     *
-     * @throws \League\Flysystem\FileNotFoundException
      */
     protected function zeroOut(Version $version)
     {
-        $version->getFileResource()->put('');
+        try {
+            $version->getFileResource()->put('');
+        } catch (FileNotFoundException $e) {
+            // If the file is not found, create an empty stand-in
+            $path = DIR_BASE . $version->getRelativePath();
+            $dir = dirname($path);
+            $this->output->writeln('  <info>⤷</info> File doesn\'t exist.. Creating it now.');
+            if (!file_exists($dir) && !mkdir(\dirname($path), 0777, true)) {
+                $this->output->error($e->getMessage());
+            } else {
+                touch($path);
+            }
+        } catch (Exception $e) {
+            $this->output->error($e->getMessage());
+        }
     }
 
 }

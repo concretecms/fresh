@@ -1,6 +1,6 @@
 <?php
 
-namespace PortlandLabs\Seed\Seed;
+namespace PortlandLabs\Fresh\Seed;
 
 use Concrete\Core\Config\Repository\Repository;
 

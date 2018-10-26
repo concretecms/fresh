@@ -1,6 +1,6 @@
 {
-    "name": "portlandlabs/seed",
-    "description": "concrete5 database seeder",
+    "name": "concrete5/fresh",
+    "description": "concrete5 database seeder / cleaner",
     "type": "concrete5-package",
     "authors": [
         {
@@ -10,11 +10,11 @@
     ],
     "require": {
         "fzaninotto/faker": "^1.8",
-        "concrete5/core": "^8.4"
+        "concrete5/core": "^8.3|dev-8.4.x-dev"
     },
     "autoload": {
         "psr-4": {
-            "PortlandLabs\\Seed\\": "src"
+            "PortlandLabs\\Fresh\\": "src"
         }
     }
 }

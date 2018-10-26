@@ -1,67 +1,33 @@
 <?php
 
-namespace PortlandLabs\Seed\Console;
+namespace PortlandLabs\Fresh\Console;
 
 use Concrete\Core\Application\Application;
+use Concrete\Core\Application\ApplicationAwareInterface;
 use Concrete\Core\Config\Repository\Repository;
-use Concrete\Core\Console\Command;
-use Concrete\Core\Console\OutputStyle;
-use PortlandLabs\Seed\Clean\Cleaner;
+use PortlandLabs\Fresh\Clean\Cleaner;
+use PortlandLabs\Fresh\DatabaseModifier;
+use Symfony\Component\Console\Style\OutputStyle;
 
-class CleanCommand extends Command implements SeedCommandInterface
+class CleanCommand extends AbstractCommand implements FreshCommandInterface
 {
+    /** @var string Signature for modern support */
+    protected $signature = 'fresh:clean {cleaner?}';
 
-    protected $signature = 'seed:clean {cleaner?}';
-
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-    }
-
-    /**
-     * Handle a call to this command
-     *
-     * @param \Concrete\Core\Config\Repository\Repository $repository
-     */
-    public function handle(Application $app, Repository $config)
-    {
-        if ($cleaner = $this->input->getArgument('cleaner')) {
-            $cleaners = [$cleaner];
-        } else {
-            $cleaners = $config->get('seed::cleaners.cleaners');
-        }
-
-        /** @var \PortlandLabs\Seed\Seed\Cleaner[] $cleaners */
-        foreach ($cleaners as $cleaner) {
-            if (\is_string($cleaner)) {
-                $cleaner = $app->make($cleaner);
-            }
-
-            if (!$cleaner instanceof Cleaner) {
-                if (is_object($cleaner)) {
-                    $class = class_basename(get_class($cleaner));
-                    $this->output->writeln("<error>Invalid Cleaner:</error> $class");
-                } else {
-                    $this->output->writeln("<error>Invalid Cleaner</error>");
-                }
-                continue;
-            }
-
-            $class = class_basename(get_class($cleaner));
-            $this->output->writeln("<info>Cleaning:</info> $class");
-
-            $cleaner->setOutput($this->getOutput());
-            $cleaner();
-        }
-    }
+    protected $classArgument = 'cleaner';
+    protected $classConfigItem = 'fresh::cleaners.cleaner';
+    protected $verb = 'Cleaning';
+    protected $noun = 'Cleaner';
 
     /**
-     * Get the output instance
+     * Validate a given modifier, make sure it's the right type
      *
-     * @return \Concrete\Core\Console\OutputStyle
+     * @param \PortlandLabs\Fresh\DatabaseModifier $modifier
+     *
+     * @return bool
      */
-    public function getOutput(): OutputStyle
+    protected function validateModifier(DatabaseModifier $modifier): bool
     {
-        return $this->output;
+        return $modifier instanceof Cleaner;
     }
 }

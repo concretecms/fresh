@@ -1,24 +1,25 @@
 <?php
 
-namespace Concrete\Package\Seed;
+namespace Concrete\Package\Fresh;
 
 use Concrete\Core\Package\Package;
-use PortlandLabs\Seed\Console\CleanCommand;
-use PortlandLabs\Seed\Console\SeedCommand;
+use PortlandLabs\Fresh\Console\CleanCommand;
+use PortlandLabs\Fresh\Console\FreshCommand;
+use PortlandLabs\Fresh\Console\SeedCommand;
 
 class Controller extends Package
 {
 
-    protected $pkgHandle = 'seed';
+    protected $pkgHandle = 'fresh';
 
     public function getPackageName()
     {
-        return t('Database Seeder');
+        return t('Database Seeder / Cleaner');
     }
 
     public function getPackageDescription()
     {
-        return t('Seed or sanitize a site with good data');
+        return t('Seed or sanitize a site with good clean data');
     }
 
     public function on_start()

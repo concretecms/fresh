@@ -1,62 +1,42 @@
 <?php
 
-namespace PortlandLabs\Seed\Console;
+namespace PortlandLabs\Fresh\Console;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Config\Repository\Repository;
-use Concrete\Core\Console\Command;
-use Concrete\Core\Console\OutputStyle;
-use PortlandLabs\Seed\Seed\Seeder;
+use PortlandLabs\Fresh\DatabaseModifier;
+use PortlandLabs\Fresh\Seed\Seeder;
+use Symfony\Component\Console\Style\OutputStyle;
 
-class SeedCommand extends Command implements SeedCommandInterface
+class SeedCommand extends AbstractCommand implements FreshCommandInterface
 {
 
-    protected $signature = 'seed:seed {seeder?}';
+    protected $signature = 'fresh:seed {seeder?}';
 
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-    }
-
-    /**
-     * Handle a call to this command
-     *
-     * @param \Concrete\Core\Config\Repository\Repository $repository
-     */
-    public function handle(Application $app, Repository $config)
-    {
-        if ($seeder = $this->input->getArgument('seeder')) {
-            $seeders = [$seeder];
-        } else {
-            $seeders = $config->get('seed::seeders.seeders');
-        }
-
-        /** @var \PortlandLabs\Seed\Seed\Seeder[] $seeders */
-        foreach ($seeders as $seeder) {
-            if (\is_string($seeder)) {
-                $seeder = $app->make($seeder);
-            }
-
-            if (!$seeder instanceof Seeder) {
-                continue;
-            }
-
-            $class = class_basename(get_class($seeder));
-
-            $this->output->writeln("<info>Seeding:</info> $class");
-
-            $seeder->setOutput($this->getOutput());
-            $seeder();
-        }
-    }
+    protected $classArgument = 'seeder';
+    protected $classConfigItem = 'fresh::seeders.seeder';
+    protected $verb = 'Seeding';
+    protected $noun = 'Seeder';
 
     /**
      * Get the output instance
      *
-     * @return \Concrete\Core\Console\OutputStyle
+     * @return OutputStyle
      */
     public function getOutput(): OutputStyle
     {
         return $this->output;
+    }
+
+    /**
+     * Validate a given modifier, make sure it's the right type
+     *
+     * @param \PortlandLabs\Fresh\DatabaseModifier $modifier
+     *
+     * @return bool
+     */
+    protected function validateModifier(DatabaseModifier $modifier): bool
+    {
+        return $modifier instanceof Seeder;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace PortlandLabs\Seed\Seed;
+namespace PortlandLabs\Fresh\Seed;
 
-use PortlandLabs\Seed\DatabaseModifier;
+use PortlandLabs\Fresh\DatabaseModifier;
 
 abstract class Seeder extends DatabaseModifier
 {
