@@ -6,10 +6,14 @@ return [
         /** Map attributes directly to a Faker property */
         /** 'first_name' => 'firstName' */
     ],
+    /** Whether the super admin should be cleaned by the UserCleaner */
     'clean_super_admin' => false,
     /** File types that we don't need to sanitize */
     'default_skip_file_types' => [
         'jpg', 'jpeg', 'png', 'gif', 'svg', 'apng', 'bmp', 'ico'
     ],
-    'skip_file_types' => null
+    /** User controlled 'skip_file_types' */
+    'skip_file_types' => [],
+    /** Which entities need to be cleared */
+    'entities' => []
 ];

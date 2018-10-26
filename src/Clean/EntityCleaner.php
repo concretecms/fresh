@@ -10,6 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class EntityCleaner extends Cleaner
 {
 
+    /**
+     * Delete all entries for entities listed in `fresh::cleaners.entities`
+     *
+     * @param \Concrete\Core\Config\Repository\Repository $config
+     * @param \Doctrine\ORM\EntityManagerInterface $em
+     */
     public function run(Repository $config, EntityManagerInterface $em)
     {
         $entities = (array)$config->get('fresh::cleaners.entities', []);
@@ -18,7 +24,7 @@ class EntityCleaner extends Cleaner
 
         if ($entities) {
             foreach ($this->allEntries($em, $entities) as $entry) {
-                $this->output->writeln(sprintf('  <info>⤷</info> Deleting entry "%s"', $entry->getID()));
+                $this->output->writeln(sprintf('  <info>⤷</info> Deleting entry "%s" of type "%s"', $entry->getID(), $entry->getEntity()->getHandle()));
                 $em->remove($entry);
 
                 $buffer[] = $entry;
@@ -48,36 +54,34 @@ class EntityCleaner extends Cleaner
         }
 
         $em->flush();
-
         foreach ($buffer as $entry) {
             $em->detach($entry);
         }
     }
 
-    private function allEntries(EntityManagerInterface $em, array $entities)
+    /**
+     * Get all entries
+     *
+     * @param \Doctrine\ORM\EntityManagerInterface $em
+     * @param array $entities
+     *
+     * @return iterable|Entry[]
+     */
+    private function allEntries(EntityManagerInterface $em, array $entities): iterable
     {
-        $entityRepository = $em->getRepository(Entity::class);
-        $entryRepository = $em->getRepository(Entry::class);
+        $qb = $em->createQueryBuilder();
+        $results = $qb
+            ->select('e')
+            ->from(Entry::class, 'e')
+            ->join('e.entity', 'entity')
+            ->where($qb->expr()->in('entity.handle', $entities))
+            ->orderBy('entity.handle')
+            ->getQuery()
+            ->iterate();
 
-        foreach ($entities as $entityHandle) {
-            /** @var Entity $entity */
-            $entity = $entityRepository->findOneBy([
-                'handle' => $entityHandle
-            ]);
-
-            if (!$entity) {
-                continue;
-            }
-
-            $this->output->writeln(sprintf('<info>⤷</info> Clearing submissions for entity "%s"', $entityHandle));
-
-            $entries = $entryRepository->findBy([
-                'entity' => $entity
-            ]);
-
-            foreach ($entries as $entry) {
-                yield $entry;
-            }
+        foreach ($results as $row) {
+            $entry = head($row);
+            yield $entry;
         }
     }
 
