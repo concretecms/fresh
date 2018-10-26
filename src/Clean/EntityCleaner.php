@@ -6,6 +6,7 @@ use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\Express\Entity;
 use Concrete\Core\Entity\Express\Entry;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
 
 class EntityCleaner extends Cleaner
 {
@@ -67,7 +68,7 @@ class EntityCleaner extends Cleaner
      *
      * @return iterable|Entry[]
      */
-    private function allEntries(EntityManagerInterface $em, array $entities): iterable
+    private function allEntries(EntityManagerInterface $em, array $entities): Generator
     {
         $qb = $em->createQueryBuilder();
         $results = $qb
