@@ -40,6 +40,7 @@ class FileCleaner extends Cleaner
         $qb->select('v')->from(Version::class, 'v');
 
         if ($skipTypes) {
+            $this->output->writeln('<info>Skipping types: ' . implode(', ', $skipTypes));
             $qb->where($qb->expr()->notIn('v.fvExtension', ':extensions'));
             $qb->setParameter('extensions', $skipTypes);
         }
@@ -56,7 +57,6 @@ class FileCleaner extends Cleaner
             ));
 
             $this->zeroOut($version);
-            $this->output->newLine();
             $em->detach($version);
         }
 

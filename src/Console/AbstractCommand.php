@@ -4,7 +4,7 @@ namespace PortlandLabs\Fresh\Console;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Application\ApplicationAwareInterface;
-use Concrete\Core\Cache;
+use Concrete\Core\Cache\Cache;
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Console\Command;
 use PortlandLabs\Fresh\DatabaseModifier;

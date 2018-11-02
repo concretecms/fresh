@@ -13,7 +13,7 @@ return [
         'jpg', 'jpeg', 'png', 'gif', 'svg', 'apng', 'bmp', 'ico'
     ],
     /** User controlled 'skip_file_types' */
-    'skip_file_types' => [],
+    'skip_file_types' => null,
     /** Which entities need to be cleared */
     'entities' => []
 ];
