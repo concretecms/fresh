@@ -12,6 +12,10 @@ class Controller extends Package
 
     protected $pkgHandle = 'fresh';
 
+    protected $pkgAutoloaderRegistries = [
+        'src' => '\PortlandLabs\Fresh',
+    ];
+
     public function getPackageName()
     {
         return t('Database Seeder / Cleaner');
