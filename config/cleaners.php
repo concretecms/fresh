@@ -8,6 +8,8 @@ return [
     ],
     /** Whether the super admin should be cleaned by the UserCleaner */
     'clean_super_admin' => false,
+    /** User controlled 'skip_user_groups' */
+    'skip_user_groups' => ['Administrators'],
     /** File types that we don't need to sanitize */
     'default_skip_file_types' => [
         'jpg', 'jpeg', 'png', 'gif', 'svg', 'apng', 'bmp', 'ico'

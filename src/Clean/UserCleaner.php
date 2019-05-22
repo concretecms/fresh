@@ -4,6 +4,7 @@ namespace PortlandLabs\Fresh\Clean;
 
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\User\User;
+use Concrete\Core\User\Group\Group;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
@@ -30,10 +31,12 @@ class UserCleaner extends Cleaner
         $cleanAdmin = $config->get('fresh::cleaners.clean_super_admin', false);
         $repository = $em->getRepository(User::class);
         $allUsers = $repository->findAll();
+        $skipUIDs = $this->getSkipUIDs($config);
 
         // Clean users
         foreach ($allUsers as $user) {
-            if ($user->getUserID() === USER_SUPER_ID && !$cleanAdmin) {
+            // Skip if clean_super_admin is false or the user exists in the skip groups
+            if ((!$cleanAdmin && $user->getUserID() === USER_SUPER_ID) || in_array($user->getUserID(), $skipUIDs, false)) {
                 continue;
             }
 
@@ -169,5 +172,29 @@ class UserCleaner extends Cleaner
             ]);
 
         return (bool)$result[0]['c'];
+    }
+
+    /**
+     * Get the users IDs from skip user groups
+     *
+     * @param Repository $config
+     *
+     * @return array
+     */
+    protected function getSkipUIDs(Repository $config)
+    {
+        $skipUIDs = [];
+        $skipGroups = $config->get('fresh::cleaners.skip_user_groups');
+
+        if (is_array($skipGroups)) {
+            foreach ($skipGroups as $skipGroup) {
+                $group = Group::getByName($skipGroup);
+                if ($group) {
+                    $skipUIDs = array_unique(array_merge($skipUIDs, $group->getGroupMemberIDs()));
+                }
+            }
+        }
+
+        return $skipUIDs;
     }
 }
