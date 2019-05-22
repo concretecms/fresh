@@ -4,6 +4,7 @@ namespace PortlandLabs\Fresh\Clean;
 
 use Concrete\Core\Config\Repository\Repository;
 use Concrete\Core\Entity\User\User;
+use Concrete\Core\Utility\IPAddress;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
@@ -87,7 +88,8 @@ class UserCleaner extends Cleaner
             $user->setUserName($username);
             $user->setUserPassword(password_hash($this->generateUserPassword($username, $email),
                 PASSWORD_DEFAULT));
-            $user->setUserLastIP('127.0.0.1');
+            $ipAddress = new IPAddress('127.0.0.1');
+            $user->setUserLastIP($ipAddress->getIp());
         });
 
         $attributes = $config->get('fresh::cleaners.attributes');
