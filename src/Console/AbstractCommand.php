@@ -87,6 +87,8 @@ abstract class AbstractCommand extends Command
         // Set cleaner output and run the cleaner
         $cleaner->setOutput($this->getOutput());
         $cleaner();
+        
+        return 0;
     }
 
     /**
@@ -110,10 +112,13 @@ abstract class AbstractCommand extends Command
     {
         try {
             parent::execute($input, $output);
+
+            return 0;
         } catch (\LogicException $e) {
             // Legacy support
             $this->input = $input;
             $this->output = new SymfonyStyle($input, $output);
+
             return isset($this->app) ? $this->app->call([$this, 'handle']) : $this->handle();
         }
     }
