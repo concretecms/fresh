@@ -1,6 +1,6 @@
 {
-    "name": "concrete5/fresh",
-    "description": "concrete5 database seeder / cleaner",
+    "name": "concretecms/fresh",
+    "description": "Concrete CMS database seeder / cleaner",
     "type": "concrete5-package",
     "authors": [
         {
