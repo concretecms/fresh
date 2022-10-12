@@ -17,6 +17,7 @@ abstract class AbstractCommand extends Command
 {
 
     protected $app;
+    protected $parser;
 
     public function __construct(Application $app, $name = null)
     {
