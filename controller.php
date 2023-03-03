@@ -12,6 +12,10 @@ class Controller extends Package
 
     protected $pkgHandle = 'fresh';
 
+    protected $pkgAutoloaderRegistries = [
+        'src' => '\PortlandLabs\Fresh',
+    ];
+
     public function getPackageName()
     {
         return t('Database Seeder / Cleaner');
@@ -28,6 +32,12 @@ class Controller extends Package
             $this->app->make('console')->add($this->app->make(SeedCommand::class));
             $this->app->make('console')->add($this->app->make(CleanCommand::class));
         }
+
+        $this->registerAutoload();
     }
 
+    protected function registerAutoload()
+    {
+        require $this->getPackagePath() . '/vendor/autoload.php';
+    }
 }
