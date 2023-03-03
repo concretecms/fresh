@@ -9,8 +9,7 @@
         }
     ],
     "require": {
-        "fzaninotto/faker": "^1.8",
-        "concrete5/core": "^8.3|dev-8.4.x-dev"
+        "fakerphp/faker": "^1.21"
     },
     "autoload": {
         "psr-4": {

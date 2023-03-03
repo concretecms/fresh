@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class AbstractCommand extends Command
 {
-
+    public const SUCCESS = 0;
     protected $app;
     protected $parser;
 
@@ -117,6 +117,8 @@ abstract class AbstractCommand extends Command
             $this->output = new SymfonyStyle($input, $output);
             return isset($this->app) ? $this->app->call([$this, 'handle']) : $this->handle();
         }
+
+        return self::SUCCESS;
     }
 
     /**
